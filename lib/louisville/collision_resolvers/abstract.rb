@@ -44,7 +44,7 @@ module Louisville
       def unique_in_history?
         return true unless using_history?
         
-        scope = ::Louisville::Slug.scoped
+        scope = Louisville::Util.scope_from(::Louisville::Slug)
         scope = scope.where(:sluggable_type => klass.base_class.sti_name)
         scope = scope.where(:slug_base => slug_base)
         scope = scope.where(:slug_sequence => slug_sequence)
@@ -54,7 +54,7 @@ module Louisville
       end
 
       def unique_in_table?
-        scope = klass.scoped
+        scope = Louisville::Util.scope_from(klass)
         scope = scope.where("#{klass.quoted_table_name}.#{klass.primary_key} <> ?", @instance.id) if @instance.persisted?
         scope = scope.where(config[:column] => @instance.louisville_slug)
 

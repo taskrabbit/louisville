@@ -33,7 +33,7 @@ module Louisville
         base_method     = config[:column]
         sequence_method = "#{config[:column]}_sequence"
 
-        scope = klass.scoped
+        scope = Louisville::Util.scope_from(klass)
         scope = scope.where("#{klass.quoted_table_name}.#{klass.primary_key} <> ?", @instance.id) if @instance.persisted?
         scope = scope.where(config[:column] => @instance.send(base_method), sequence_method => @instance.send(sequence_method))
 
@@ -44,7 +44,7 @@ module Louisville
         base_field = config[:column]
         sequ_field = "#{config[:column]}_sequence"
 
-        scope = klass.scoped
+        scope = Louisville::Util.scope_from(klass)
         scope = scope.where(base_field => slug_base)
         scope = scope.where("#{klass.quoted_table_name}.#{klass.primary_key} <> ?", @instance.id) if @instance.persisted?
 
@@ -55,7 +55,7 @@ module Louisville
       def next_valid_slug_from_history
         return nil unless using_history?
         
-        scope = ::Louisville::Slug.scoped
+        scope = Louisville::Util.scope_from(::Louisville::Slug)
         scope = scope.where(:sluggable_type => klass.base_class.sti_name)
         scope = scope.where(:slug_base => slug_base)
         scope = scope.where("#{Louisville::Slug.quoted_table_name}.sluggable_id <> ?", @instance.id) if @instance.persisted?
