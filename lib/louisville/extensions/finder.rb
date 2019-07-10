@@ -31,13 +31,16 @@ module Louisville
       module ClassMethods
 
         def find_with_louisville_finder(*args)
-          return find_without_lousville_finder(*args) if args.length != 1
+          return find_without_louisville_finder(*args) if args.length != 1
 
           id = args[0]
           id = id.id if ActiveRecord::Base === id
-          return find_without_louisville_finder(*args) if Louisville::Util.numeric?(id)
 
-          relation_with_louisville_finder.find_one(id)
+          if id.is_a?(String) && !Louisville::Util.numeric?(id)
+            relation_with_louisville_finder.find_one(id)
+          else
+            find_without_louisville_finder(*args)
+          end
         end
 
         private

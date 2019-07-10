@@ -66,5 +66,30 @@ describe Louisville::Extensions::Finder do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
+  context "pass-through" do
+    let(:user1) { FinderUser.create! name: "Marco" }
+    let(:user2) { FinderUser.create! name: "Polo" }
+
+    after { FinderUser.delete_all }
+
+    it "uses the original Rails logic for numerical ids" do
+      expect(FinderUser.find(user1.id)).to eq user1
+    end
+
+    it "uses the original Rails logic for multiple ids" do
+      expect(FinderUser.find(user1.id, user2.id)).to match_array [user1, user2]
+
+      expect { FinderUser.find(user1.id, FinderUser.maximum(:id) + 1) }
+        .to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it "uses the original Rails logic for an array of ids" do
+      expect(FinderUser.find([user1.id, user2.id])).to match_array [user1, user2]
+
+      expect { FinderUser.find([user1.id, FinderUser.maximum(:id) + 1]) }
+        .to raise_error(ActiveRecord::RecordNotFound)
+
+    end
+  end
 
 end
