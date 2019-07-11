@@ -1,5 +1,5 @@
 adapter: 'mysql2'
-host: localhost
+host: 127.0.0.1
 database: louisville_test
 encoding: utf8
 username: root
