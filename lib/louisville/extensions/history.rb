@@ -27,8 +27,8 @@ module Louisville
           extend ::Louisville::Extensions::History::ClassMethods
 
           # If our slug has changed we should manage the history.
-          after_save :delete_matching_historical_slug,  :if => :louisville_slug_changed?
-          after_save :generate_historical_slug,         :if => :louisville_slug_changed?
+          after_save :delete_matching_historical_slug,  if: -> { ActiveRecord.version.to_s >= '5' ? louisville_slug_previously_changed? : louisville_slug_changed? }
+          after_save :generate_historical_slug,         if: -> { ActiveRecord.version.to_s >= '5' ? louisville_slug_previously_changed? : louisville_slug_changed? }
 
           before_destroy :destroy_historical_slugs!
         end

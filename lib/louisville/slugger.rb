@@ -53,6 +53,9 @@ module Louisville
       self.send("#{louisville_config[:column]}_changed?")
     end
 
+    def louisville_slug_previously_changed?
+      self.send("#{louisville_config[:column]}_previously_changed?")
+    end
 
     def apply_louisville_slug
       value = extract_louisville_slug_value_from_field
