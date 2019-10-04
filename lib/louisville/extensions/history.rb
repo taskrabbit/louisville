@@ -63,7 +63,11 @@ module Louisville
 
       # Then we generate a new historical slug for the previous value (if there is one).
       def generate_historical_slug
-        previous_value = self.send("#{louisville_config[:column]}_was")
+        previous_value = if ActiveRecord.version.to_s >= '5'
+                           self.previous_changes[louisville_config[:column]].try(:[], 0)
+                         else
+                           self.send("#{louisville_config[:column]}_was")
+                         end
 
         return unless previous_value
 
