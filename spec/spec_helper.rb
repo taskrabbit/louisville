@@ -7,6 +7,7 @@
 
 require 'active_record'
 require 'louisville'
+require 'yaml'
 
 begin
   require 'byebug'

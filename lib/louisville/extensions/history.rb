@@ -27,8 +27,8 @@ module Louisville
           extend ::Louisville::Extensions::History::ClassMethods
 
           # If our slug has changed we should manage the history.
-          after_save :delete_matching_historical_slug,  :if => :louisville_slug_changed?
-          after_save :generate_historical_slug,         :if => :louisville_slug_changed?
+          after_save :delete_matching_historical_slug,  if: :louisville_slug_previously_changed?
+          after_save :generate_historical_slug,         if: :louisville_slug_previously_changed?
 
           before_destroy :destroy_historical_slugs!
         end
@@ -63,7 +63,7 @@ module Louisville
 
       # Then we generate a new historical slug for the previous value (if there is one).
       def generate_historical_slug
-        previous_value = self.send("#{louisville_config[:column]}_was")
+        previous_value = self.previous_changes[louisville_config[:column]].try(:[], 0)
 
         return unless previous_value
 
